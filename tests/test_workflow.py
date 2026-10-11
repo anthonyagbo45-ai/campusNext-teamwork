@@ -69,6 +69,12 @@ class ChangeStatusTests(unittest.TestCase):
             change_status(tickets, "T001", "resolved")
         self.assertEqual(tickets[0]["status"], "open")
 
+    def test_unknown_status_word_is_rejected(self):
+        tickets = [make_ticket("T001", assigned_to="Amina")]
+        with self.assertRaises(ValidationError):
+            change_status(tickets, "T001", "done")
+        self.assertEqual(tickets[0]["status"], "open")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,3 +1,4 @@
+from campusflow.constants import STATUSES
 from campusflow.errors import InvalidTransitionError, TicketNotFoundError, ValidationError
 
 # Which status each status may move to. A resolved ticket cannot move anywhere.
@@ -23,6 +24,10 @@ def change_status(tickets, ticket_id, new_status):
     wanted_id = ticket_id.strip().upper() if isinstance(ticket_id, str) else ""
     for ticket in tickets:
         if ticket["id"] == wanted_id:
+            if new_status not in STATUSES:
+                raise ValidationError(
+                    f"Invalid status {new_status!r}. Allowed: {', '.join(STATUSES)}."
+                )
             current = ticket["status"]
             if new_status not in ALLOWED_TRANSITIONS[current]:
                 raise InvalidTransitionError(
