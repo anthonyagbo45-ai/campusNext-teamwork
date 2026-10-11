@@ -19,7 +19,6 @@ class AssignTicketTests(unittest.TestCase):
         self.assertEqual(tickets[1]["assigned_to"], "Amina")
         self.assertIsNone(tickets[0]["assigned_to"])
 
-
     def test_unknown_ticket_id_is_rejected(self):
         tickets = [make_ticket("T001")]
         with self.assertRaises(TicketNotFoundError):
@@ -30,6 +29,27 @@ class AssignTicketTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             assign_ticket(tickets, "T001", "   ")
         self.assertIsNone(tickets[0]["assigned_to"])
-        
+
+    def test_non_text_staff_name_is_rejected(self):
+        tickets = [make_ticket("T001")]
+        with self.assertRaises(ValidationError):
+            assign_ticket(tickets, "T001", None)
+        self.assertIsNone(tickets[0]["assigned_to"])
+
+    def test_staff_name_is_stored_without_extra_spaces(self):
+        tickets = [make_ticket("T001")]
+        assign_ticket(tickets, "T001", "  Amina  ")
+        self.assertEqual(tickets[0]["assigned_to"], "Amina")
+
+    def test_ticket_id_is_case_and_space_tolerant(self):
+        tickets = [make_ticket("T001")]
+        assign_ticket(tickets, "  t001 ", "Amina")
+        self.assertEqual(tickets[0]["assigned_to"], "Amina")
+
+    def test_unknown_id_is_checked_before_blank_name(self):
+        with self.assertRaises(TicketNotFoundError):
+            assign_ticket([], "T999", "   ")
+
+
 if __name__ == "__main__":
     unittest.main()
