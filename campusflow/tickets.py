@@ -1,4 +1,4 @@
-from campusflow.constants import CATEGORIES, URGENCY_LEVELS
+from campusflow.constants import CATEGORIES, STATUSES, URGENCY_LEVELS
 from campusflow.errors import TicketNotFoundError, ValidationError
 from campusflow.ids import id_number, next_id
 
@@ -43,8 +43,13 @@ def create_ticket(tickets, title, category, urgency, affected_users):
     return ticket
 
 
-def list_tickets(tickets):
-    """Return a new list ordered by ID number."""
+def list_tickets(tickets, status=None):
+    """Return a NEW list ordered by ID number. Optional status filter (case-insensitive)."""
+    if status is not None:
+        wanted = status.strip().lower() if isinstance(status, str) else status
+        if wanted not in STATUSES:
+            raise ValidationError(f"Invalid status {status!r}. Allowed: {', '.join(STATUSES)}.")
+        tickets = [t for t in tickets if t["status"] == wanted]
     return sorted(tickets, key=lambda t: id_number(t["id"]))
 
 
