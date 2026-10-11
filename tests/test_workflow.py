@@ -1,6 +1,6 @@
 import unittest
 
-from campusflow.errors import TicketNotFoundError, ValidationError
+from campusflow.errors import InvalidTransitionError, TicketNotFoundError, ValidationError
 from campusflow.workflow import assign_ticket, change_status
 
 
@@ -50,11 +50,24 @@ class AssignTicketTests(unittest.TestCase):
         with self.assertRaises(TicketNotFoundError):
             assign_ticket([], "T999", "   ")
 
+
 class ChangeStatusTests(unittest.TestCase):
     def test_assigned_ticket_moves_to_in_progress(self):
         tickets = [make_ticket("T001", assigned_to="Amina")]
         change_status(tickets, "T001", "in_progress")
         self.assertEqual(tickets[0]["status"], "in_progress")
+
+    def test_unassigned_ticket_cannot_move_to_in_progress(self):
+        tickets = [make_ticket("T001")]
+        with self.assertRaises(InvalidTransitionError):
+            change_status(tickets, "T001", "in_progress")
+        self.assertEqual(tickets[0]["status"], "open")
+
+    def test_cannot_skip_in_progress(self):
+        tickets = [make_ticket("T001", assigned_to="Amina")]
+        with self.assertRaises(InvalidTransitionError):
+            change_status(tickets, "T001", "resolved")
+        self.assertEqual(tickets[0]["status"], "open")
 
 
 if __name__ == "__main__":
