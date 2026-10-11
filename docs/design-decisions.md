@@ -44,6 +44,7 @@ Each engineer writes the unit tests for their own features.
 - Valid input that the ticket's current state does not allow (assigning or changing a resolved ticket, moving an unassigned ticket to in_progress, moving to a status out of order, reopening a ticket that is not resolved) raise InvalidTransitionError.
 - Unknown ticket IDs raise TicketNotFoundError.
 - Check order inside a function: find the ticket first (TicketNotFoundError), then validate the input (ValidationError), then check the ticket's state (InvalidTransitionError).
+- Ticket IDs are trimmed and uppercased before lookup.
 
 ## Branch plan
 - Branch names: feat/1-ticket-creation, feat/3-assign-ticket, and so on.
