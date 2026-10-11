@@ -1,7 +1,7 @@
 import unittest
 
 from campusflow.errors import TicketNotFoundError, ValidationError
-from campusflow.workflow import assign_ticket
+from campusflow.workflow import assign_ticket, change_status
 
 
 def make_ticket(ticket_id="T001", status="open", assigned_to=None):
@@ -49,6 +49,12 @@ class AssignTicketTests(unittest.TestCase):
     def test_unknown_id_is_checked_before_blank_name(self):
         with self.assertRaises(TicketNotFoundError):
             assign_ticket([], "T999", "   ")
+
+class ChangeStatusTests(unittest.TestCase):
+    def test_assigned_ticket_moves_to_in_progress(self):
+        tickets = [make_ticket("T001", assigned_to="Amina")]
+        change_status(tickets, "T001", "in_progress")
+        self.assertEqual(tickets[0]["status"], "in_progress")
 
 
 if __name__ == "__main__":

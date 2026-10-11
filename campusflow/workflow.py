@@ -10,3 +10,11 @@ def assign_ticket(tickets, ticket_id, staff_name):
             ticket["assigned_to"] = staff_name.strip()
             return ticket
     raise TicketNotFoundError(f"No ticket with ID {ticket_id!r}")
+
+def change_status(tickets, ticket_id, new_status):
+    wanted_id = ticket_id.strip().upper() if isinstance(ticket_id, str) else ""
+    for ticket in tickets:
+        if ticket["id"] == wanted_id:
+            ticket["status"] = new_status
+            return ticket
+    raise TicketNotFoundError(f"No ticket with ID {ticket_id!r}")
