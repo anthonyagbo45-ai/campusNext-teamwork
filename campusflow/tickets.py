@@ -1,6 +1,12 @@
 from campusflow.constants import CATEGORIES, STATUSES, URGENCY_LEVELS
 from campusflow.errors import TicketNotFoundError, ValidationError
 from campusflow.ids import id_number, next_id
+from campusflow.validation import (
+    validate_affected_users,
+    validate_category,
+    validate_title,
+    validate_urgency,
+)
 
 
 def compute_priority(urgency, affected_users):
@@ -23,12 +29,10 @@ def _match_choice(value, allowed, label):
 
 
 def create_ticket(tickets, title, category, urgency, affected_users):
-    if not isinstance(title, str) or not title.strip():
-        raise ValidationError("Title must not be blank.")
-    category = _match_choice(category, CATEGORIES, "category")
-    urgency = _match_choice(urgency, URGENCY_LEVELS, "urgency")
-    if isinstance(affected_users, bool) or not isinstance(affected_users, int) or affected_users < 1:
-        raise ValidationError("affected_users must be a positive whole number.")
+    title = validate_title(title)
+    category = validate_category(category)
+    urgency = validate_urgency(urgency)
+    affected_users = validate_affected_users(affected_users)
     ticket = {
         "id": next_id(tickets),
         "title": title.strip(),

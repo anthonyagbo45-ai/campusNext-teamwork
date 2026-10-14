@@ -1,5 +1,6 @@
 from campusflow.constants import STATUSES
 from campusflow.errors import InvalidTransitionError, TicketNotFoundError, ValidationError
+from campusflow.validation import validate_staff_label
 
 # Which status each status may move to. A resolved ticket cannot move anywhere.
 ALLOWED_TRANSITIONS = {
@@ -19,8 +20,7 @@ def _find_ticket(tickets, ticket_id):
 
 def assign_ticket(tickets, ticket_id, staff_name):
     ticket = _find_ticket(tickets, ticket_id)                       # 1. find
-    if not isinstance(staff_name, str) or not staff_name.strip():   # 2. validate
-        raise ValidationError("Staff member name must not be blank.")
+    staff_name = validate_staff_label(staff_name)                   # 2. validate
     if ticket["status"] == "resolved":                              # 3. state
         raise InvalidTransitionError(
             f"{ticket['id']} is resolved. Reopen it before assigning."
