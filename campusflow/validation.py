@@ -40,3 +40,17 @@ def validate_category(value):
 
 def validate_urgency(value):
     return _match_choice(value, URGENCY_LEVELS, "urgency")
+
+
+def _validate_text(value, message):
+    if not isinstance(value, str) or not value.strip():
+        raise ValidationError(message)
+    return value.strip()
+
+
+def validate_title(value):
+    return _validate_text(value, "Title must not be blank.")
+
+
+def validate_staff_label(value):
+    return _validate_text(value, "Staff member name must not be blank.")

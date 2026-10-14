@@ -4,6 +4,8 @@ from campusflow.errors import ValidationError
 from campusflow.validation import (
     validate_affected_users,
     validate_category,
+    validate_staff_label,
+    validate_title,
     validate_urgency,
 )
 
@@ -52,6 +54,28 @@ class UrgencyTests(unittest.TestCase):
             with self.subTest(value=bad):
                 with self.assertRaises(ValidationError):
                     validate_urgency(bad)
+
+
+class TitleTests(unittest.TestCase):
+    def test_accepts_and_strips(self):
+        self.assertEqual(validate_title("  Wi-Fi down  "), "Wi-Fi down")
+
+    def test_rejects_bad_values(self):
+        for bad in ("", "   ", None, 7, ["x"]):
+            with self.subTest(value=bad):
+                with self.assertRaises(ValidationError):
+                    validate_title(bad)
+
+
+class StaffLabelTests(unittest.TestCase):
+    def test_accepts_and_strips(self):
+        self.assertEqual(validate_staff_label("  Nese "), "Nese")
+
+    def test_rejects_bad_values(self):
+        for bad in ("", "   ", None, 7, ["x"]):
+            with self.subTest(value=bad):
+                with self.assertRaises(ValidationError):
+                    validate_staff_label(bad)
 
 
 if __name__ == "__main__":
