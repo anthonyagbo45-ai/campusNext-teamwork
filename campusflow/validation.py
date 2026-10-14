@@ -58,3 +58,18 @@ def validate_staff_label(value):
 
 def validate_status(value):
     return _match_choice(value, STATUSES, "status")
+
+
+def validate_note_author(value):
+    return _validate_text(value, "Note author must not be blank.")
+
+
+def validate_note_message(value):
+    if not isinstance(value, str):
+        raise ValidationError("Note message must be text.")
+    text = value.strip()
+    if not 5 <= len(text) <= 300:
+        raise ValidationError(
+            "Note message must be between 5 and 300 characters."
+        )
+    return text
