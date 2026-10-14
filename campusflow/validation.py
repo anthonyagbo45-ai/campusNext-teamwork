@@ -1,3 +1,4 @@
+from campusflow.constants import CATEGORIES, URGENCY_LEVELS
 from campusflow.errors import ValidationError
 
 
@@ -21,3 +22,21 @@ def validate_affected_users(value):
         )
 
     return value
+
+
+def _match_choice(value, allowed, label):
+    if isinstance(value, str):
+        for option in allowed:
+            if value.strip().lower() == option.lower():
+                return option
+    raise ValidationError(
+        f"Invalid {label} {value!r}. Allowed: {', '.join(allowed)}."
+    )
+
+
+def validate_category(value):
+    return _match_choice(value, CATEGORIES, "category")
+
+
+def validate_urgency(value):
+    return _match_choice(value, URGENCY_LEVELS, "urgency")
