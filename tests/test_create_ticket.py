@@ -5,9 +5,9 @@ from campusflow.tickets import create_ticket
 
 
 class CreateTicketRuleTests(unittest.TestCase):
-    def test_new_ticket_has_all_eight_fields(self):
+    def test_new_ticket_has_all_nine_fields(self):
         t = create_ticket([], "Printer jammed", "Hardware", "medium", 4)
-        self.assertEqual(set(t), {"id", "title", "category", "urgency", "affected_users",
+        self.assertEqual(set(t), {"id", "title", "category", "urgency", "affected_users", "notes",
                                   "priority", "status", "assigned_to"})
 
     def test_category_and_urgency_are_case_and_space_tolerant(self):
