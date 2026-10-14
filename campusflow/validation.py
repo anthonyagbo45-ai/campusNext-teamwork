@@ -1,4 +1,4 @@
-from campusflow.constants import CATEGORIES, URGENCY_LEVELS
+from campusflow.constants import CATEGORIES, STATUSES, URGENCY_LEVELS
 from campusflow.errors import ValidationError
 
 
@@ -54,3 +54,7 @@ def validate_title(value):
 
 def validate_staff_label(value):
     return _validate_text(value, "Staff member name must not be blank.")
+
+
+def validate_status(value):
+    return _match_choice(value, STATUSES, "status")
