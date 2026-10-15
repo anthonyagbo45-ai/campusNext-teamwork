@@ -30,6 +30,10 @@ If `tickets.json` does not exist, the program starts with no tickets.
 | 6 | Reopen ticket |
 | 7 | Work queue |
 | 8 | Report |
+| 9 | Add follow-up note |
+| 10 | View ticket notes |
+| 11 | Search tickets |
+| 12 | Understanding check |
 | 0 | Exit |
 
 ## How to run the tests
@@ -51,6 +55,11 @@ All tests should pass (`OK`).
 - Work queue: open tickets only, ordered critical to low, ties broken by earlier ID number.
 - Ticket IDs look like T001. Case and spaces are ignored when you type an ID.
 - Category, urgency and status ignore case and extra spaces.
+- Notes: a note can be added only while a ticket is open or in_progress. Message 5 to 300 characters after trimming. Note IDs (N001, N002 ...) count per ticket, and a rejected note uses no ID.
+- Search: title text (any case, part of a word) plus optional category, status and priority. Every supplied filter must match (AND). A blank filter means any. Search never changes tickets. Results can be sorted by priority, then numeric ticket ID.
+- Report: total, counts by status, priority and category, resolved, unresolved (open + in_progress) and resolution percentage. An empty list shows 0%.
+- Creating a ticket and searching show numbered choices for category (Network, Hardware, Software, Other), urgency (low, medium, high) and status/priority, each with a short hint. Type the number or the name.
+- Understanding check: menu option 12, six questions (A/B/C/D), score 0 to 6, and two short explanations saved to `understanding-check-notes.md`.
 
 ## Project layout
 
@@ -61,7 +70,11 @@ All tests should pass (`OK`).
       tickets.py     create, list and view tickets
       workflow.py    assign, change status, reopen
       work_queue.py  sorted work queue
-      reports.py     report counts
+      reports.py     report counts and resolution percentage
+      search.py      combined search filters and priority sort
+      notes.py       follow-up notes
+      validation.py  shared input checks
+      understanding_check.py  question bank, scoring and the quiz
       storage.py     load and save tickets.json
       cli.py         menu (the only file that calls input())
     tests/           unit tests for every module

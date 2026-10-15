@@ -31,7 +31,7 @@ class CliTests(unittest.TestCase):
 
     def test_errors_are_printed_not_raised(self):
         output = drive(self.path, ["1", "x", "Other", "low", "abc", "5", "T404", "open",
-                                   "9", "0"])
+                                   "99", "0"])
         self.assertIn("Error: affected_users must be a positive whole number.", output)
         self.assertIn("Error: No ticket with ID 'T404'", output)
         self.assertIn("Please choose a number", output)
