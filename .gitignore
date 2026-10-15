@@ -4,3 +4,4 @@ __pycache__/
 .env
 data/tickets.json
 tickets.json
+understanding-check-notes.md
