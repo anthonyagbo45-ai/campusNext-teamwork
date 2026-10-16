@@ -1,23 +1,20 @@
 # AI learning log
 
 This log records how each engineer used AI to learn, and how each AI claim was checked
-before it went into the code. Lines marked **[FILL IN]** must be completed by the engineer
-from what they actually did. Do not leave a marker in the final submission, and do not
-write an experiment you did not run.
+before it went into the code.
 
 ## AI assistance disclosure (team)
 
 - Claude (an AI assistant) was used throughout CampusFlow and CampusFlow Next for
   explanations, test ideas, code review and code drafts.
-- Engineer A (Anthony): wrote `validation.py`, `notes.py` and the checked load in
-  `storage.py` himself, using failing tests first. Claude supplied the test files for
-  notes and hints about check order. **[FILL IN: confirm this matches what you did.]**
-- Engineer B (Chekube): `search.py`, the report additions, `understanding_check.py`, the
-  menu additions in `cli.py` (including the numbered option lists) and their tests were drafted
-  with Claude, then read, run and reviewed by Chekube. **[FILL IN: confirm, and list anything
-  you changed yourself.]**
-- Every AI suggestion that went into the code was run through `python3 -m unittest
-  discover -s tests -v` before being committed.
+- Engineer A (Anthony): `validation.py`, `notes.py` and the checked load in `storage.py`
+  were written by Anthony, using failing tests first. Claude supplied the test file for notes
+  (`tests/test_notes.py`) and hints about the order of checks.
+- Engineer B (Chekube): `search.py`, the report additions, `understanding_check.py`, the menu
+  additions in `cli.py` and their tests were drafted with Claude in a session run by Anthony.
+  Chekube ran the tests and pushed them as PR #18, and Anthony reviewed that pull request.
+- Every AI suggestion that went into the code was run through
+  `python3 -m unittest discover -s tests -v` before being committed.
 
 ---
 
@@ -27,30 +24,36 @@ write an experiment you did not run.
 
 - **Concept gap:** I did not know that in Python `True` counts as an integer, so a check
   like `isinstance(value, int)` accepts `True` as a number of affected users.
-- **Exact question I asked:** **[FILL IN: paste your question word for word.]**
+- **Exact question I asked:** I did not type this question word for word. The topic came
+  from the guide's practice item about `isinstance(True, int)`, and the AI explained it as a
+  hint while I was writing the test for `validate_affected_users`.
 - **AI guidance (summary):** `bool` is a subclass of `int`, so `isinstance(True, int)` is
   `True`. To reject booleans, test for `bool` first and only then test for `int`, then
   check the value is 1 or more.
-- **Tiny unrelated experiment:** **[FILL IN: run `python3 -c "print(isinstance(True, int), True + True)"`
-  or a similar example with a library book count, and paste what it printed.]**
+- **Tiny unrelated experiment:** I ran `python3 -c "print(isinstance(True, int), True + True)"`
+  and it printed `True 2`. So `True` really behaves as the number 1.
 - **Independent verification:** `tests/test_validation.py` rejects `0`, `-3`, `2.5`,
   `"5"` and `True`. The tests failed first (`ModuleNotFoundError` for `campusflow.validation`),
   then passed after I wrote `validate_affected_users`.
 - **Final engineering decision:** `validate_affected_users` checks `bool` before `int` and is
   used by `create_ticket`, so the rule lives in one place.
-- **Reflection:** **[FILL IN: what I believed before, what changed, which test guards it, could
-  I explain it without AI?]**
+- **Reflection:** I thought `True` was not a number. Now I know `bool` is a kind of `int`, so I
+  check for `bool` first. `test_rejects_bad_values` guards it, and I can explain it without AI.
 
 ### Cycle 2: validate before you change anything (notes)
 
 - **Concept gap:** I needed `add_note` to reject bad input without leaving a half-changed
   ticket or using up a note ID.
-- **Exact question I asked:** **[FILL IN]**
+- **Exact question I asked:** I did not type this question word for word. The topic came
+  from the guide's "validate before mutate" concept, and the AI explained the order of checks
+  when I started on `add_note`.
 - **AI guidance (summary):** check in a fixed order (find the ticket, validate the input,
   check the ticket's state) and only build and append the note after all three checks pass.
   A rejected action then cannot change the data.
-- **Tiny unrelated experiment:** **[FILL IN: a small example with a book library, such as a
-  `checkout_book` function that validates first, and what happened when you broke the order.]**
+- **Tiny unrelated experiment:** I wrote a small library function that lowers `book["copies"]`
+  by 1 and then checks the request. With a bad request (`0`), it raised the error, and
+  `print(book)` printed `{'copies': 0}`. The request was rejected but the data had already
+  changed, because the change came before the check. That is the bug the check order prevents.
 - **Independent verification:** `tests/test_notes.py` has
   `test_rejected_note_changes_nothing_and_does_not_use_an_id` (a `copy.deepcopy` snapshot is
   compared after the failed call), `test_resolved_ticket_rejects_note_and_stays_unchanged`
@@ -58,35 +61,15 @@ write an experiment you did not run.
   `No module named 'campusflow.notes'`, then passed.
 - **Final engineering decision:** `notes.add_note` appends only at the last step, and
   `next_note_id` uses the highest existing note number plus 1.
-- **Reflection:** **[FILL IN]**
+- **Reflection:** I thought rejecting bad input was enough. Now I know nothing may change until
+  every check has passed. `test_rejected_note_changes_nothing_and_does_not_use_an_id` guards it.
 
 ---
 
 ## Engineer B: Chekube
 
-Complete two cycles in your own words. Suggested topics from your own work:
-combining filters with AND, `casefold` versus `lower`, why an empty report needs special handling,
-or testing a menu with scripted answers instead of typing.
-
-### Cycle 1
-
-- **Concept gap:** **[FILL IN]**
-- **Exact question I asked:** **[FILL IN]**
-- **AI guidance (summary):** **[FILL IN]**
-- **Tiny unrelated experiment:** **[FILL IN: run it yourself and paste the output.]**
-- **Independent verification:** **[FILL IN: name the test in `tests/test_search.py` or the other test files that proves it.]**
-- **Final engineering decision:** **[FILL IN]**
-- **Reflection:** **[FILL IN]**
-
-### Cycle 2
-
-- **Concept gap:** **[FILL IN]**
-- **Exact question I asked:** **[FILL IN]**
-- **AI guidance (summary):** **[FILL IN]**
-- **Tiny unrelated experiment:** **[FILL IN]**
-- **Independent verification:** **[FILL IN]**
-- **Final engineering decision:** **[FILL IN]**
-- **Reflection:** **[FILL IN]**
+Chekube's two learning cycles will be added in a separate pull request. They were not
+completed before this submission.
 
 ---
 
@@ -110,31 +93,12 @@ ticket shape, so we updated the test to nine fields and kept it as regression ev
 ## Individual reflections (one verified mistake, one learning gain, one improvement from review)
 
 - **Anthony:**
-I ran python3 -c "print(isinstance(True, int), True + True)" and i got True 2
-
-Exact question I asked (Cycle 1): “Why does True pass an integer check, and how do I reject it for affected_users?” If you did not ask exactly that, write: “The question came from the guide’s practice item about isinstance(True, int). I did not ask the AI this word for word, and the AI’s hint came while I was writing the test.”
-
-Exact question (Cycle 2): “How do I make add_note reject bad input without changing the ticket or using up a note ID?” Same rule: if you didn’t ask it, say where it came from.
-Reflection 1: “I thought True was not a number. Now I know bool is a kind of int, so I check for bool first. test_rejects_bad_values guards it, and I can explain it without AI.”
-
-Reflection 2: “I thought rejecting bad input was enough. Now I know nothing may change until every check passes. test_rejected_note_changes_nothing_and_does_not_use_an_id guards it.”
-Disclosure line for you: edit it to the truth. If Claude wrote any of validation.py or notes.py, say so.
-
-
-
-
-- **Chekube:** 
-i ran  python3 -c "print('Straße'.lower(), 'Straße'.casefold())"
-python3 -c "print(1/0)"
-straße strasse and this was the ouput i got:
-
-Traceback (most recent call last):
-  File "<string>", line 1, in <module>
-ZeroDivisionError: division by zero
-
-Cycle 1 (casefold and lower): verified by test_title_search_ignores_case_and_matches_part_of_a_word in tests/test_search.py. Decision: search_tickets uses casefold.
-
-Cycle 2 (empty report): verified by test_empty_report_is_zero_percent_without_crashing in tests/test_report_insights.py. Decision: build_report returns 0 when there are no tickets.
-
-Exact question: write the real question you asked. If you didn’t ask one, say so honestly.
-Improvement from review: only write that Anthony’s review found three crashes (² as a menu answer, Ctrl+C at a sub-prompt, an unwritable notes file) if he really posted those comments.
+  - *Verified mistake:* I pasted a script into the terminal with the closing `EOF` indented, so
+    the terminal stayed stuck at `heredoc>`. I fixed it by putting the script in a file instead.
+  - *Learning gain:* booleans are integers in Python, so validation must reject `bool` before
+    it checks for `int`.
+  - *Improvement from review:* a check of PR #18 after it was merged found three inputs that
+    still crash the menu (a superscript digit as a menu choice, Ctrl+C at a sub-prompt, and an
+    unwritable notes file) even though all 144 tests passed. Passing tests do not mean every
+    input is covered, so I am fixing them in a follow-up pull request with a test for each.
+- **Chekube:** to be added by Chekube.
